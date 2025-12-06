@@ -1,2 +1,0 @@
-# buba
-my buba clicker
