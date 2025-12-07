@@ -48,7 +48,7 @@
 
     /* Garland */
     .garland{position:fixed;left:0;right:0;top:6px;height:36px;z-index:150;pointer-events:none;display:flex;align-items:center;justify-content:center}
-    .garland .string{width:90%;height:2px;background:linear-gradient(90deg,#8a5cf5,#f59e0b);opacity:0.15;border-radius:4px}
+    .garland .string{width:90%;Height:2px;background:linear-gradient(90deg,#8a5cf5,#f59e0b);opacity:0.15;borderRadius:4px}
     .garland .bulb{position:absolute;width:10px;height:10px;border-radius:50%;box-shadow:0 0 8px rgba(255,255,255,0.08);animation:blinkBulb 2s infinite}
     @keyframes blinkBulb{0%{opacity:0.4}50%{opacity:1}100%{opacity:0.4}}
 
@@ -268,6 +268,9 @@
                     <button class="btn ghost" id="langRu">Русский</button>
                     <button class="btn ghost" id="langEn">English</button>
                     <button class="btn" id="undoBtn" title="Назад к предыдущему слову (Backspace когда поле пустое)"><i class="fas fa-undo"></i></button>
+                    <!-- Mode switches -->
+                    <button class="btn ghost" id="modeEasy">Легкий</button>
+                    <button class="btn ghost" id="modeHard">Хард</button>
                 </div>
 
                 <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
@@ -390,13 +393,32 @@ const STORAGE = {
     records: 'mt_records',
     font: 'mt_font',
     sound: 'mt_sound',
-    palette: 'mt_palette' // selected theme/palette
+    palette: 'mt_palette', // selected theme/palette
+    mode: 'mt_mode' // easy / hard
 };
 
 /* Word lists */
 const wordLists = {
     ru: [ "это","быть","что","он","на","с","а","в","не","по","но","они","мы","как","из","у","к","за","год","от","так","же","ты","о","до","или","все","еще","нужно","можно","только","очень","свой","который","сегодня","завтра","вчера","сейчас","вместо","почти","опять","снова","возможно","пожалуйста","спасибо","надо","нужно","люблю","любить","работа","работать","делать","дело","время","люди","человек","ребенок","детство","семья","семейный","город","страна","адрес","улица","квартира","комната","окно","дверь","машина","автомобиль","дорога","поезд","самолет","автобус","станция","пункт","магазин","рынок","продукты","покупка","цена","скидка","касса","платить","счет","карта","деньги","банк","сервис","услуга","работник","коллега","начальник","профессия","опыт","знание","умение","навык","обучение","школа","университет","курсы","задание","процесс","результат","цель","задача","проект","план","срок","система","программа","приложение","сайт","страница","файл","папка","документ","отчет","данные","информация","сервер","клиент","подключение","интернет","сообщение","письмо","звонок","контакт","профиль","аккаунт","пароль","безопасность","настройка","параметр","инструмент","интерфейс","меню","кнопка","поле","форма","поиск","результат","поискать","открыть","закрыть","сохранить","удалить","изменить","создать","редактировать","просмотр","скачать","загрузить","обновить","установить","удалять","запустить","остановить","перезапустить","проверить","отправить","получить","ответить","объяснить","помочь","поддержка","инструкция","руководство","пример","шаблон","модель","структура","элемент","состав","компонент","модуль","функция","метод","класс","объект","событие","состояние","логика","алгоритм","защита","шифрование","шифр","парольный","технический","практический","теоретический","пространство","возможность","условие","ограничение","огромный","маленький","большой","длинный","короткий","быстрый","медленный","стабильный","надежный","удобный","комфортный","эффективный","полезный","интересный","важный","сложный","простой","чистый","красивый","удивительный","необычный","обычный","частый","редкий","всегда","иногда","часто","редко","вчерашний","завтрашний","утренний","вечерний","ночной","рабочий","выходной","праздник","встреча","переговоры","собрание","встречаться","обсуждать","решать","договор","соглашение","контракт","условие","правило","закон","регламент","стандарт","сертификат","качество","тест","тестирование","ошибка","исключение","баг","фикс","исправление","резерв","копия","архив","бэкап","восстановление","мониторинг","логирование","отчетность","статистика","анализ","отзыв","рейтинг","оценка","рекомендация","совет","планирование","тайминг","приоритет","составление","мнение","состояние","шаг","бумага","неделя","голос","расстояние","мать","лето","вечер","картина","театр","информация","положение","центр","ответ","автор","стена","интерес","правило","ветер","цвет","причина","основа","культура","данные","момент" ],
     en: [ "the","be","to","of","and","a","in","that","have","i","it","for","not","on","with","he","as","you","do","at","this","but","his","by","from","they","we","say","her","she","or","an","will","my","one","all","would","there","their","what","so","up","out","if","about","who","get","which","go","me","when","make","can","like","time" ]
+};
+
+/* Additional harder pools (more complex/longer words) */
+const hardPools = {
+    ru: [
+        "инфраструктура","конфиденциальность","аутентификация","автоматизация","взаимосвязь",
+        "параметризация","оптимизация","десериализация","интеграция","модернизация",
+        "рефакторинг","асинхронность","синхронизация","конфигурирование","классификация",
+        "верификация","декомпозиция","агрегация","каллиграфия","рендеринг","компиляция",
+        "конфронтация","электрификация","традиционализм","диссертация","компьютеризация",
+        "транзакционность","интероперабельность","абстрагирование"
+    ],
+    en: [
+        "architecture","sophisticated","conscientious","miscellaneous","implementation",
+        "synchronization","authentication","cryptography","optimization","concurrency",
+        "asynchronous","serialization","integration","decomposition","abstraction",
+        "configuration","verification","refactoring","aggregation","modularization"
+    ]
 };
 
 /* ========= DOM ========= */
@@ -422,6 +444,9 @@ const langEnBtn = document.getElementById('langEn');
 const restartBtn = document.getElementById('restartBtn');
 const timeButtons = document.querySelectorAll('[data-time]');
 const undoBtn = document.getElementById('undoBtn');
+
+const modeEasyBtn = document.getElementById('modeEasy');
+const modeHardBtn = document.getElementById('modeHard');
 
 const resultsOverlay = document.getElementById('resultsOverlay');
 const resultWpm = document.getElementById('resultWpm');
@@ -588,12 +613,49 @@ function renderThemeButtons(){
     });
 }
 
-/* ========= Helpers & rest of code (unchanged logic) ========= */
+/* ========= Mode & pool helpers ========= */
+/* mode: 'easy' | 'hard' */
+let currentMode = localStorage.getItem(STORAGE.mode) || 'easy';
+function setMode(mode){
+    currentMode = mode === 'hard' ? 'hard' : 'easy';
+    localStorage.setItem(STORAGE.mode, currentMode);
+    modeEasyBtn.classList.toggle('primary', currentMode === 'easy');
+    modeHardBtn.classList.toggle('primary', currentMode === 'hard');
+    initTest();
+}
+
+/* Build effective pool depending on language and mode.
+   Additional rule: for Russian, always filter out words containing 'ъ' (hard sign).
+*/
+function getPool(){
+    let base = (wordLists[currentLanguage] || wordLists.en).slice();
+    // filter out words containing the hard sign 'ъ'
+    if(currentLanguage === 'ru'){
+        base = base.filter(w => !w.includes('ъ'));
+    }
+    if(currentMode === 'easy'){
+        // easy: prefer more common / shorter words
+        base = base.filter(w => w.length <= 7);
+    } else {
+        // hard: use union of base longer words + hardPools
+        const hardExtra = (hardPools[currentLanguage] || []).filter(w => !(currentLanguage === 'ru' && w.includes('ъ')));
+        base = base.concat(hardExtra).filter((v,i,a) => a.indexOf(v)===i);
+        // prefer longer words in hard mode
+        base = base.filter(w => w.length >= 4);
+    }
+    // fallback to english if empty
+    if(!base || base.length === 0){
+        base = wordLists.en.slice();
+    }
+    return base;
+}
+
+/* ========= Helpers & rest of code (unchanged logic, but randWords uses getPool) ========= */
 /* randWords: avoid immediate duplicates (no same word twice in a row).
    If avoidPrev is provided, ensure first generated word != avoidPrev.
 */
 function randWords(count = 300, avoidPrev = null){
-    const pool = wordLists[currentLanguage] || wordLists.en;
+    const pool = getPool();
     const poolLen = pool.length;
     const arr = [];
     let last = avoidPrev !== null ? String(avoidPrev) : null;
@@ -605,7 +667,7 @@ function randWords(count = 300, avoidPrev = null){
         do {
             candidate = pool[Math.floor(Math.random() * poolLen)];
             attempts++;
-            if(attempts > 50) break;
+            if(attempts > 100) break;
         } while(candidate === last);
         arr.push(candidate);
         last = candidate;
@@ -1092,6 +1154,10 @@ timeButtons.forEach(btn=>{
     });
 });
 
+/* Mode buttons */
+modeEasyBtn.addEventListener('click', ()=> setMode('easy'));
+modeHardBtn.addEventListener('click', ()=> setMode('hard'));
+
 /* Parallax & Snow (unchanged) */
 let parallaxEnabled = localStorage.getItem(STORAGE.parallax) !== 'false';
 function initParallax(){
@@ -1384,6 +1450,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
     renderThemeButtons();
     const savedPalette = localStorage.getItem(STORAGE.palette) || 'purple';
     applyPalette(savedPalette);
+
+    // mode init
+    currentMode = localStorage.getItem(STORAGE.mode) || currentMode;
+    modeEasyBtn.classList.toggle('primary', currentMode === 'easy');
+    modeHardBtn.classList.toggle('primary', currentMode === 'hard');
 
     initTest();
     applyCaretSkin();
